@@ -7,11 +7,41 @@ The TinyMan DevKit is a powerful and compact development board centered around t
 
 Designed for both beginners and experienced developers, the TinyMan DevKit features seamless USB programming capabilities through the Micronucleus bootloader, eliminating the need for external programmers in most use cases. The board's robust design ensures reliability and ease of use, making it perfect for hobbyists, students, and professionals working with AVR microcontrollers.
 
-TinyMan DevKit, if ordered with MCU has micronuclious bootkloader and blink sketch pre-loaded; 
+TinyMan DevKit, if ordered with MCU has micronuclious bootkloader and blink sketch pre-loaded
+
+![image](media/3DView.jpg)
+
+## Customizable Pins
+
+| Pin  | GPIO | ADC   | PWM (Timer)         | PCINT | INT0 | I²C (USI) |
+|------|------|-------|---------------------|-------|------|-----------|
+| PB0  | Y    | ADC0  | OC0A / OC1A         | Y     | N    | SDA       |
+| PB1  | Y    | ADC1  | OC0B / OC1A         | Y     | N    | N         |
+| PB2  | Y    | ADC2  | OC0B (limited use)  | Y     | Y    | SCL       |
+
+### Notes
+
+- **ADC mapping:**
+  - PB0 → ADC0  
+  - PB1 → ADC1  
+  - PB2 → ADC2  
+
+- **Interrupts:**
+  - All pins support **Pin Change Interrupt (PCINT)**  
+  - Only **PB2 supports INT0** (external interrupt)
+
+- **PWM:**
+  - PB0 and PB1 are the most flexible PWM pins  
+  - PB2 has limited PWM capability (depends on timer mode)
+
+- **I²C (via USI):**
+  - SDA → PB0  
+  - SCL → PB2  
+  - Implemented using **USI**, not full hardware TWI
 
 ## Code upload with micronuclious (USB)
 - Using Arduino IDE - [ATTinyCore](https://github.com/SpenceKonde/ATTinyCore/blob/1.5.2/Installation.md)
-- Using [Platfiorm IO](https://platformio.org/) - Please see below
+- Using [Platfiorm IO](https://platformio.org/) - please see [example pio project](/examples/pio/)
 
 ### Platform IO Configuration
 ```ini
@@ -20,7 +50,6 @@ platform = atmelavr
 board = digispark-tiny
 framework = arduino
 ```
-
 
 ## Burning micronuclious bootloader with USBAasp
 
@@ -55,3 +84,6 @@ avrdude -Cavrdude_attinycore_1_5_2.conf -v -pattiny85 -cusbasp -e -Uefuse:w:0xFE
 - `-Ulfuse:w:0xF1:m`: Writes the low fuse to 0xF1. This sets the clock source to the internal 8MHz RC oscillator with PLL enabled for 16MHz CPU clock (CKSEL=0001), start-up time to 6 CK/14 CK + 64 ms (SUT=00), clock output  disabled (CKOUT=0), and clock divided by 8 initially (CKDIV8=1, but PLL overrides for 16MHz operation in bootloader).
 
 More about fuses [fusecalc](https://www.engbedded.com/fusecalc/)
+
+## Schematic
+![image](media/schematic.jpg)
